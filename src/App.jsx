@@ -1,18 +1,38 @@
 import React from "react";
 import styled from "styled-components";
+import AsciiFeed from "./AsciiFeed";
+
+const FEEDS = [
+  { id: "YDvsBbKfLPA", title: "Bloomberg" },
+  { id: "gCNeDWCI0vo", title: "Al Jazeera" },
+  { id: "BOy2xDU1LC8", title: "CGTN" }
+];
 
 const Page = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
   height: 100vh;
-  font-size: 24px;
-  color: #333;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+`;
+
+const FeedSlot = styled.div`
+  position: relative;
+  flex: 1;
+  background: #000;
+  overflow: hidden;
 `;
 
 function App() {
-  return <Page>Hello world!</Page>;
+  return (
+    <Page>
+      {FEEDS.map((feed) => (
+        <FeedSlot key={feed.id}>
+          <AsciiFeed streamUrl={`/api/hls/${feed.id}/playlist.m3u8`} />
+        </FeedSlot>
+      ))}
+    </Page>
+  );
 }
 
 export default App;
-
