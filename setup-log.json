@@ -1,0 +1,10 @@
+{
+  "app_id": "live-news-feeds",
+  "app_name": "Live News Feeds",
+  "domain": "https://live-news-feeds.leo.gd",
+  "host": "localhost",
+  "port": "3134",
+  "author": "leo",
+  "anthropic": false,
+  "created_on": "Sun May 17 02:20:46 PM EDT 2026"
+}
