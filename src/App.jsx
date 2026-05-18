@@ -3,9 +3,9 @@ import styled from "styled-components";
 import AsciiFeed from "./AsciiFeed";
 
 const FEEDS = [
-  { id: "YDvsBbKfLPA", slug: "sky-news", title: "Sky News" },
-  { id: "gCNeDWCI0vo", slug: "al-jazeera", title: "Al Jazeera" },
-  { id: "BOy2xDU1LC8", slug: "cgtn", title: "CGTN" }
+  { slug: "sky-news", title: "Sky News" },
+  { slug: "al-jazeera", title: "Al Jazeera" },
+  { slug: "cgtn", title: "CGTN" }
 ];
 
 const Page = styled.div`
@@ -43,8 +43,8 @@ function App() {
   return (
     <Page>
       {visible.map((feed) => (
-        <FeedSlot key={feed.id}>
-          <AsciiFeed streamUrl={`/api/hls/${feed.id}/playlist.m3u8`} />
+        <FeedSlot key={feed.slug}>
+          <AsciiFeed streamUrl={`/api/hls/${feed.slug}/playlist.m3u8`} />
         </FeedSlot>
       ))}
     </Page>

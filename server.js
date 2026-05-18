@@ -1,11 +1,8 @@
 import express from "express";
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Readable } from "node:stream";
 
-const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
@@ -17,21 +14,12 @@ app.use((req, res, next) => {
   next();
 });
 
-const resolveCache = new Map();
-const RESOLVE_TTL = 20 * 60 * 1000;
-
-async function resolveManifest(videoId) {
-  const cached = resolveCache.get(videoId);
-  if (cached && cached.expires > Date.now()) return cached.url;
-
-  const { stdout } = await execAsync(
-    `yt-dlp -g --format "bestvideo[protocol=m3u8_native]/best[protocol=m3u8_native]" "https://www.youtube.com/watch?v=${videoId}"`,
-    { maxBuffer: 4 * 1024 * 1024 }
-  );
-  const url = stdout.trim().split("\n").pop();
-  resolveCache.set(videoId, { url, expires: Date.now() + RESOLVE_TTL });
-  return url;
-}
+const FEED_URLS = {
+  "sky-news":
+    "https://linear417-gb-hls1-prd-ak.cdn.skycdp.com/100e/Content/HLS_001_1080_30/Live/channel(skynews)/index_1080-30.m3u8",
+  "al-jazeera": "https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8",
+  cgtn: "https://news.cgtn.com/resource/live/english/cgtn-news.m3u8"
+};
 
 function rewritePlaylist(body, baseUrl) {
   return body
@@ -51,9 +39,10 @@ function rewritePlaylist(body, baseUrl) {
     .join("\n");
 }
 
-app.get("/api/hls/:videoId/playlist.m3u8", async (req, res) => {
+app.get("/api/hls/:slug/playlist.m3u8", async (req, res) => {
   try {
-    const manifestUrl = await resolveManifest(req.params.videoId);
+    const manifestUrl = FEED_URLS[req.params.slug];
+    if (!manifestUrl) return res.status(404).send("unknown feed");
     const r = await fetch(manifestUrl);
     const text = await r.text();
     res.set("Content-Type", "application/vnd.apple.mpegurl");
