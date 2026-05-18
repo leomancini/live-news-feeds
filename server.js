@@ -18,7 +18,7 @@ const FEED_URLS = {
   "sky-news":
     "https://linear417-gb-hls1-prd-ak.cdn.skycdp.com/100e/Content/HLS_001_1080_30/Live/channel(skynews)/index_1080-30.m3u8",
   "al-jazeera": "https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8",
-  cgtn: "https://news.cgtn.com/resource/live/english/cgtn-news.m3u8"
+  cgtn: "https://english-livebkali.cgtn.com/live/encgtn.m3u8"
 };
 
 function rewritePlaylist(body, baseUrl) {
