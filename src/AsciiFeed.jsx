@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import styled from "styled-components";
 
@@ -28,10 +28,23 @@ const Canvas = styled.canvas`
   height: 100%;
 `;
 
+const Loading = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font: 14px Menlo, monospace;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+`;
+
 export default function AsciiFeed({ streamUrl }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const sampleCanvasRef = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     sampleCanvasRef.current = document.createElement("canvas");
@@ -115,6 +128,7 @@ export default function AsciiFeed({ streamUrl }) {
             ctx.fillText(char, x * charWidth, y * charHeight);
           }
         }
+        setLoading(false);
       } catch (err) {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, rect.width, rect.height);
@@ -142,6 +156,7 @@ export default function AsciiFeed({ streamUrl }) {
         crossOrigin="anonymous"
       />
       <Canvas ref={canvasRef} />
+      {loading && <Loading>LOADING…</Loading>}
     </Wrap>
   );
 }
