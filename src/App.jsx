@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import AsciiFeed from "./AsciiFeed";
 
 const FEEDS = [
-  { id: "YDvsBbKfLPA", title: "Bloomberg" },
-  { id: "gCNeDWCI0vo", title: "Al Jazeera" },
-  { id: "BOy2xDU1LC8", title: "CGTN" }
+  { id: "YDvsBbKfLPA", slug: "sky-news", title: "Sky News" },
+  { id: "gCNeDWCI0vo", slug: "al-jazeera", title: "Al Jazeera" },
+  { id: "BOy2xDU1LC8", slug: "cgtn", title: "CGTN" }
 ];
 
 const Page = styled.div`
@@ -23,10 +23,26 @@ const FeedSlot = styled.div`
   overflow: hidden;
 `;
 
+function getSlugFromPath() {
+  const segment = window.location.pathname.split("/").filter(Boolean)[0];
+  return segment ? segment.toLowerCase() : null;
+}
+
 function App() {
+  const [slug, setSlug] = useState(getSlugFromPath);
+
+  useEffect(() => {
+    const onPop = () => setSlug(getSlugFromPath());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const single = slug ? FEEDS.find((f) => f.slug === slug) : null;
+  const visible = single ? [single] : FEEDS;
+
   return (
     <Page>
-      {FEEDS.map((feed) => (
+      {visible.map((feed) => (
         <FeedSlot key={feed.id}>
           <AsciiFeed streamUrl={`/api/hls/${feed.id}/playlist.m3u8`} />
         </FeedSlot>
